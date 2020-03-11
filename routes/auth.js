@@ -3,6 +3,7 @@ const User = require("../models/User");
 const { registerValidation, loginValidation } = require("../validation");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const verify = require("./verifyToken");
 
 const router = express.Router();
 
@@ -49,24 +50,46 @@ router.post("/login", async (req, res) => {
   const { error } = loginValidation(req.body);
 
   if (error) {
-    return res.status(400).send(error.details[0].message);
+    return res.status(400).json({
+      success: true,
+      data: error.details[0].message
+    });
   }
 
   // Check if user already exist
   const user = await User.findOne({ email });
   if (!user) {
-    return res.status(400).send("user not found.");
+    return res.status(400).json({
+      success: false,
+      data: "user not found."
+    });
   }
 
   // Check the password
   const validPass = await bcrypt.compare(password, user.password);
   if (!validPass) {
-    return res.status(400).send("Password Incorrect.");
+    return res.status(400).json({
+      success: false,
+      data: "Password Incorrect."
+    });
   }
 
   // create token
   const token = jwt.sign({ _id: user._id }, process.env.SECRET);
-  res.header("auth-token", token).send(token);
+  res.header("auth-token", token).json({ token, user });
+});
+
+// @route  GET api/auth
+// @desc   Get logged in user
+// access  Private
+router.get("/user", verify, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
 });
 
 module.exports = router;
