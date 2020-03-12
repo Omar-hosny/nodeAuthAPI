@@ -1,8 +1,8 @@
-import React, { Fragment } from "react";
+import React from "react";
 
 const Home = () => {
   return (
-    <Fragment>
+    <div className="home">
       <div className="container">
         <div className="row">
           <div className="col-md-8 mx-auto mt-5">
@@ -13,7 +13,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-    </Fragment>
+    </div>
   );
 };
 

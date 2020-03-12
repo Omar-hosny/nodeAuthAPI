@@ -17,24 +17,23 @@ router.post("/register", async (req, res) => {
     return res.status(400).send(error.details[0].message);
   }
 
-  // Check if user already exist
-  const emailExist = await User.findOne({ email });
-  if (emailExist) {
-    return res.status(400).send("email already exist..");
-  }
-
-  // hash the password
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  const user = new User({
-    name,
-    email,
-    password: hashedPassword
-  });
   try {
-    const newUser = await user.save();
-    res.status(201).send({ user: user._id });
+    // Check if user already exist
+    const emailExist = await User.findOne({ email });
+    if (emailExist) {
+      return res.status(400).send("email already exist..");
+    }
+
+    // hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword
+    });
+
+    res.status(201).json({ user });
   } catch (err) {
     res.status(400).json({
       success: false,

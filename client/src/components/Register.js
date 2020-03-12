@@ -8,14 +8,12 @@ const Register = props => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      props.history.push("/home");
+      props.history.push("/");
     }
 
     if (error !== null) {
       setErrors(error);
-      setTimeout(() => {
-        setErrors("");
-      }, 10000);
+      clearErrors();
     }
     // eslint-disable-next-line
   }, [error, isAuthenticated, history.push]);
@@ -38,9 +36,7 @@ const Register = props => {
     e.preventDefault();
     if (!name || !email || !password) {
       setErrors("Please enter all fields..");
-      setTimeout(() => {
-        setErrors("");
-      }, 3000);
+      clearErrors();
     } else {
       registerUser({
         name,
@@ -56,58 +52,67 @@ const Register = props => {
     }
   };
 
+  // clear errors
+  const clearErrors = () => {
+    setTimeout(() => {
+      setErrors("");
+    }, 3000);
+  };
+
   return (
-    <form onSubmit={onSubmit}>
-      <div className="container mt-5">
-        {errors ? <div className="alert alert-danger"> {errors} </div> : null}
-        <div className="row">
-          <div className="col-md-6  mx-auto">
-            <h2 className="text-center">Register your account</h2>
-            <div className="form-group">
-              <label htmlFor="name">Name</label>
+    <div className="layout">
+      <form onSubmit={onSubmit}>
+        <div className="container pt-5">
+          {errors ? <div className="alert alert-danger"> {errors} </div> : null}
+          <div className="row">
+            <div className="col-md-6  mx-auto">
+              <h2 className="text-center">Register your account</h2>
+              <div className="form-group">
+                <label htmlFor="name">Name</label>
+                <input
+                  value={name}
+                  name="name"
+                  type="text"
+                  placeholder="Enter your name."
+                  className="form-control"
+                  onChange={onChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input
+                  type="text"
+                  value={email}
+                  name="email"
+                  placeholder="Enter your email address."
+                  className="form-control"
+                  onChange={onChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input
+                  value={password}
+                  name="password"
+                  type="password"
+                  placeholder="Enter your password."
+                  className="form-control"
+                  onChange={onChange}
+                />
+              </div>
+
               <input
-                value={name}
-                name="name"
-                type="text"
-                placeholder="Enter your name."
-                className="form-control"
-                onChange={onChange}
+                type="submit"
+                value="Register"
+                className="btn btn-primary btn-block"
               />
             </div>
-
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                type="text"
-                value={email}
-                name="email"
-                placeholder="Enter your email address."
-                className="form-control"
-                onChange={onChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input
-                value={password}
-                name="password"
-                type="password"
-                placeholder="Enter your password."
-                className="form-control"
-                onChange={onChange}
-              />
-            </div>
-
-            <input
-              type="submit"
-              value="Register"
-              className="btn btn-primary btn-block"
-            />
           </div>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 };
 
